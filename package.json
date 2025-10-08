@@ -2,7 +2,7 @@
   "name": "Twitter-Clone",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "backend/server.js",
   "scripts": {
     "backend": "nodemon backend/server.js",
     "frontend": "cd frontend && pnpm run dev",
@@ -10,6 +10,7 @@
   },
   "keywords": [],
   "author": "",
+  "type": "module",
   "license": "ISC",
   "packageManager": "pnpm@10.18.1",
   "dependencies": {
