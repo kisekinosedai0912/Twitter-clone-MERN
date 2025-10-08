@@ -13,6 +13,7 @@ const PORT = process.env?.PORT || 5000;
 const BASE_URL = process.env?.BASE_URL || 'http://localhost';
 
 app.use(express.json());
+app.use(express.urlencoded({extended: true})) // used to pass form data encoded in url (usage in postman);
 app.use(cors());
 
 app.use('/api/auth', authRoutes);
