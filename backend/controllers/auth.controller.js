@@ -48,7 +48,8 @@ export async function signup(req, res, next) {
                 profileImg: newUser?.profileImg,
                 coverImg: newUser?.coverImg,
                 following: newUser?.following,
-                followers: newUser?.followers
+                followers: newUser?.followers,
+                token,
             });
         } 
         return next(new AppError(400, 'Invalid user data.'));
@@ -60,14 +61,57 @@ export async function signup(req, res, next) {
     }
 }
 
-export async function login(req, res) {
-    return res.json({
-        data: "this is the login endpoint"
-    })
+export async function login(req, res, next) {
+    const { username, password } = req.body;
+
+    try {
+        const user = await User?.findOne({ username });
+        const isValidPassword = await bcrypt.compare(password, user.password); 
+
+        if (!username || !password) {
+            return next(new AppError(400, 'Invalid empty fields!, kindly fill in a valid username & password'));
+        }
+
+        if (!user || !isValidPassword) {
+            return next(new AppError(400, 'Invalid username or password'));
+        }
+
+        const { decoded, token } = generateTokenAndSetCookies(user?._id, res);
+
+        return res.status(201).json({
+            _id: user?._id, 
+            fullname: user?.fullname,
+            username: user?.username,
+            email: user?.email,
+            profileImg: user?.profileImg,
+            coverImg: user?.coverImg,
+            following: user?.following,
+            followers: user?.followers,
+            token,
+            decoded,
+        });
+
+    } catch (error) {
+        console.log('Error in signup controller ', error);
+        console.error(error.message);
+        next(error)
+    }
 }
 
-export async function logout(req, res) {
-    return res.json({
-        data: "this is the logout endpoint"
-    })
+export async function logout(req, res, next) {
+    try {
+        res.cookie('jwt', '', {maxAge: 0});
+        return res.status(200).json({message: 'Loggedout successfully' })
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function validateAccess(req, res, next) {
+    try {
+        const user = await User.findById(req.user._id).select('-password');
+        return res.status(200).json(user);
+    } catch (error) {
+        next(error)
+    }
 }

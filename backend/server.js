@@ -5,6 +5,7 @@ import path from 'path';
 import authRoutes from './routes/auth.routes.js'
 import { errorHandler } from './middleware/errorMiddleware.js';
 import { mdbConnection } from './config/connection.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ const BASE_URL = process.env?.BASE_URL || 'http://localhost';
 app.use(express.json());
 app.use(express.urlencoded({extended: true})) // used to pass form data encoded in url (usage in postman);
 app.use(cors());
+app.use(cookieParser()); // allows you to parse the cookie from user requests
 
 app.use('/api/auth', authRoutes);
 /*
