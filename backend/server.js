@@ -1,8 +1,12 @@
+// packages
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import path from 'path';
+// routes
 import authRoutes from './routes/auth.routes.js'
+import userRoutes from './routes/user.routes.js'
+// utilities
 import { errorHandler } from './middleware/errorMiddleware.js';
 import { mdbConnection } from './config/connection.js';
 import cookieParser from 'cookie-parser';
@@ -19,6 +23,7 @@ app.use(cors());
 app.use(cookieParser()); // allows you to parse the cookie from user requests
 
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 /*
 ** configuration for production
 */

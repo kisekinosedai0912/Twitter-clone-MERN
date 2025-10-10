@@ -20,10 +20,10 @@ export async function protectedRoute(req, res, next) {
 
         req.user = user;
         next();
-
+ 
     } catch (error) {
         console.log('Error occurred in protectedRoute middleware: ', error)
-        console.log('An error occurred: ', error.message)
+        console.error('An error occurred: ', error.message)
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
 }

@@ -49,7 +49,6 @@ export async function signup(req, res, next) {
                 coverImg: newUser?.coverImg,
                 following: newUser?.following,
                 followers: newUser?.followers,
-                token,
             });
         } 
         return next(new AppError(400, 'Invalid user data.'));
@@ -66,7 +65,7 @@ export async function login(req, res, next) {
 
     try {
         const user = await User?.findOne({ username });
-        const isValidPassword = await bcrypt.compare(password, user.password); 
+        const isValidPassword = await bcrypt.compare(password, user?.password ?? ''); 
 
         if (!username || !password) {
             return next(new AppError(400, 'Invalid empty fields!, kindly fill in a valid username & password'));
@@ -76,7 +75,7 @@ export async function login(req, res, next) {
             return next(new AppError(400, 'Invalid username or password'));
         }
 
-        const { decoded, token } = generateTokenAndSetCookies(user?._id, res);
+        generateTokenAndSetCookies(user?._id, res);
 
         return res.status(201).json({
             _id: user?._id, 
@@ -87,8 +86,6 @@ export async function login(req, res, next) {
             coverImg: user?.coverImg,
             following: user?.following,
             followers: user?.followers,
-            token,
-            decoded,
         });
 
     } catch (error) {
