@@ -7,6 +7,6 @@ export function generateTokenAndSetCookies(userId, res) {
         maxAge: 15*24*60*60*1000, // 15 days in milleseconds, jwt will only be accessible for 15 days
         httpOnly: true, // handles/prevenets XSS attacks (cross-site scripting)
         sameSite: 'strict', // handles/prevents CSRF attacks (cross-site request forgery)
-        secure: process.env?.JWT_SECRET === 'production',
+        secure: process.env?.NODE_ENV === 'production',
     });
 }
