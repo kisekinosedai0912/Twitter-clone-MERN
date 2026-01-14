@@ -8,6 +8,7 @@ import { v2 as cloudinary } from 'cloudinary';
 // routes
 import authRoutes from './routes/auth.routes.js'
 import userRoutes from './routes/user.routes.js'
+import postRoutes from './routes/post.routes.js'
 // utilities
 import { errorHandler } from './middleware/errorMiddleware.js';
 import { mdbConnection } from './config/connection.js';
@@ -30,6 +31,7 @@ app.use(cookieParser()); // allows you to parse the cookie from user requests
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/post', postRoutes);
 /*
 ** configuration for production
 */

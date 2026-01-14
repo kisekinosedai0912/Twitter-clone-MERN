@@ -98,7 +98,7 @@ export async function login(req, res, next) {
 export async function logout(req, res, next) {
     try {
         res.cookie('jwt', '', {maxAge: 0});
-        return res.status(200).json({message: 'Loggedout successfully' })
+        return res.status(200).json({success: true, message: 'Loggedout successfully' })
     } catch (error) {
         next(error);
     }

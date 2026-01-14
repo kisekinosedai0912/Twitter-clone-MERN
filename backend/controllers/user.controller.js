@@ -93,7 +93,7 @@ export async function changePassword(req, res, next) {
     const { currentPassword, newPassword } = req.body;
     const userId = req.user?._id;
 
-    if (!currentPassword && !newPassword) {
+    if ((!currentPassword && newPassword) || (!newPassword && currentPassword)) {
         return next(new AppError(400, 'Please provide your current and new password.'))
     }
 
