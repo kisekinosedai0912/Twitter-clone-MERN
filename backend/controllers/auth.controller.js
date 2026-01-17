@@ -77,7 +77,7 @@ export async function login(req, res, next) {
 
         generateTokenAndSetCookies(user?._id, res);
 
-        return res.status(201).json({
+        return res.status(200).json({
             _id: user?._id, 
             fullname: user?.fullname,
             username: user?.username,
