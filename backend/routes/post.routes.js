@@ -9,6 +9,7 @@ import {
     getCurrentUserLikes, 
     getLikedPosts,
     getFollowingPosts,
+    getPostsForYou,
 } from '../controllers/post.controller.js';
 
 const router = express.Router();
@@ -21,5 +22,6 @@ router.get('/', protectedRoute, getAllPosts);
 router.get('/user/likes', protectedRoute, getCurrentUserLikes);
 router.get('/user/likes/:id', protectedRoute, getLikedPosts);
 router.get('/following/posts', protectedRoute, getFollowingPosts);
+router.get('/foryou/posts', protectedRoute, getPostsForYou);
 
 export default router;

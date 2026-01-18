@@ -252,5 +252,90 @@ export async function getLikedPosts(req, res, next) {
 }
 
 export async function getFollowingPosts(req, res, next) {
+    const user = await User.findById(req.user?._id);
+    if (!user) return next(new AppError(404, 'User not found'));
+
+    const limit = parseInt(req.query.limit) || 5;
+    const cursor = req.query.cursor 
+            ? new mongoose.Types.ObjectId(req.query.cursor)
+            : null;
     
+    const query = {
+        user: { $in: user.following },
+        ...(cursor && { _id: { $lt: cursor } })
+    };
+
+    try {
+        const followedUsersPost = await Post.find(query)
+                .sort({ _id: -1 })
+                .populate('user', 'username fullname profileImg')
+                .populate('comments.user', 'fullname username profileImg')
+                .limit(limit + 1)
+                .lean();
+
+        if (!followedUsersPost) {
+            return res.status(200).json({
+                success: true,
+                message: 'No posts to view. Follow new users to view their posts'
+            });
+        }
+
+        const hasNext = followedUsersPost.length > limit;
+        const result = hasNext ? followedUsersPost.slice(0, limit) : followedUsersPost;
+
+        return res.status(200).json({
+            success: true,
+            message: "Fetched all followed user's post",
+            followingPosts: result,
+            nextCursor: hasNext ? followedUsersPost[followedUsersPost.length - 1]._id : null
+        });
+        
+    } catch (error) {
+        console.log('An error occurred in getFollowingPosts controller: ', error.message);
+        next(error)
+    }
+}
+
+export async function getPostsForYou(req, res, next) {
+    const limit = parseInt(req.query.limit) || 5;
+    const cursor = req.query.cursor 
+            ? new mongoose.Types.ObjectId(req.query.cursor)
+            : null;
+    
+    const query = {
+        user: { $ne: req.user?._id },
+        ...(cursor && { _id: { $lt: cursor } })
+    }
+
+    try {
+        const posts = await Post.find(query)
+            .sort({ _id: -1 })
+            .populate('user', 'fullname username profileImg')
+            .populate('comments.user', 'fullname username profileImg')
+            .limit(limit + 1)
+            .lean();
+        
+        if (posts.length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: 'No posts available',
+                posts: [],
+                nextCursor: null
+            });
+        }
+
+        const hasNext = posts.length > limit;
+        const result = hasNext ? posts.slice(0, limit) : posts;
+
+        return res.status(200).json({
+            success: true,
+            message: 'Fetched posts for you',
+            posts: result,
+            nextCursor: hasNext ? posts[posts.length - 1]._id : null,
+        })
+
+    } catch (error) {
+        console.log('An error occurred in getPostsForYou controller: ', error.message);
+        next(error);
+    }
 }
