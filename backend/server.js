@@ -26,8 +26,13 @@ const PORT = process.env?.PORT || 5000;
 const BASE_URL = process.env?.BASE_URL || 'http://localhost';
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true})) // used to pass form data encoded in url (usage in postman);
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', 
+    credentials: true, 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.use(express.urlencoded({ limit: '50mb', extended: true}));
 app.use(cookieParser()); // allows you to parse the cookie from user requests
 
 app.use('/api/auth', authRoutes);
@@ -46,6 +51,7 @@ if (process.env?.NODE_ENV === 'production') {
     });
 }
 /** end of production configuration **/
+
 app.use(errorHandler);
 app.listen(PORT, () => {
     mdbConnection();
