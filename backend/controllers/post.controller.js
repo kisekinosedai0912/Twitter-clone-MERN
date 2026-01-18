@@ -35,14 +35,13 @@ export async function createPost(req, res, next) {
     }
 }
 
-export async function reactions(req, res, next) {z
+export async function reactions(req, res, next) {
     const { postId } = req.params
     const userId = req.user?._id;
     const post = await Post.findById(postId)
     if (!post) return res.status(400).json({ message: 'Post not found' })
 
     try {
-        const user = await User.findById(userId);
         const notification = new Notification({
             type: 'like',
             from: userId,
